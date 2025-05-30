@@ -55,7 +55,7 @@
 1. 在 Yunzai-Bot 的 plugins 目录下克隆本仓库：
 
 ```bash
-git clone git clone https://github.com/jiuzeyuli/xiuxian-plugin.git
+git clone https://github.com/jiuzeyuli/xiuxian-plugin.git ./plugins/xiuxian-plugin/
 ```
 
 ## 安装依赖
