@@ -1,13 +1,13 @@
-// xiuxian-plugin/model/DataModel.js
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-class DataModel {
+export default class DataModel {
   constructor(fileName) {
     this.filePath = path.join(process.cwd(), "data", "xiuxian", fileName);
     this.data = this.load();
   }
 
+  // 加载数据
   load() {
     try {
       if (fs.existsSync(this.filePath)) {
@@ -20,6 +20,7 @@ class DataModel {
     }
   }
 
+  // 保存数据
   save() {
     try {
       fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2));
@@ -28,19 +29,23 @@ class DataModel {
     }
   }
 
+  // 获取数据
   get(key) {
     return this.data[key];
   }
 
+  // 设置数据
   set(key, value) {
     this.data[key] = value;
     this.save();
   }
 
+  // 检查是否存在
   has(key) {
     return this.data.hasOwnProperty(key);
   }
 
+  // 删除数据
   delete(key) {
     if (this.has(key)) {
       delete this.data[key];
@@ -48,9 +53,8 @@ class DataModel {
     }
   }
 
+  // 获取所有数据
   getAll() {
     return this.data;
   }
 }
-
-module.exports = DataModel;

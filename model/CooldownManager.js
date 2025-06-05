@@ -1,5 +1,4 @@
-// xiuxian-plugin/model/CooldownManager.js
-class CooldownManager {
+export default class CooldownManager {
   constructor() {
     this.cooldowns = new Map();
     this.dualCultivationRequests = new Map();
@@ -65,5 +64,3 @@ class CooldownManager {
     this.dualCultivationRequests.delete(key);
   }
 }
-
-module.exports = CooldownManager;

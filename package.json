@@ -1,7 +1,7 @@
 {
   "name": "xiuxian-plugin",
-  "version": "1.0.0",
-  "description": "修仙渡劫系统 for Yunzai-Bot",
+  "version": "3.0.0",
+  "description": "修仙渡劫系统 for Yunzai-Bot V3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,11 +10,19 @@
     "yunzai",
     "plugin",
     "xiuxian",
-    "cultivation"
+    "cultivation",
+    "v3"
   ],
-  "author": "九沢御璃",
+  "author": "修仙插件开发组",
   "license": "MIT",
   "dependencies": {
     "node-schedule": "^2.1.0"
+  },
+  "plugin": {
+    "name": "修仙渡劫",
+    "description": "体验从凡人到飞升的修仙之路",
+    "version": "3.0.0",
+    "author": "修仙插件开发组",
+    "priority": 9999
   }
 }

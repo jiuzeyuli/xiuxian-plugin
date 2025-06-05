@@ -1,0 +1,58 @@
+export default [
+  {
+    id: 1,
+    name: "《基础吐纳诀》",
+    effect: "expRate:1.1",
+    level: 1,
+    desc: "基础修炼功法，提升修炼效率",
+  },
+  {
+    id: 2,
+    name: "《五行道法》",
+    effect: "breakthrough:1.15",
+    level: 2,
+    desc: "五行相生相克，提升突破成功率",
+  },
+  {
+    id: 3,
+    name: "《九天玄功》",
+    effect: "expRate:1.3, alchemy:1.2",
+    level: 3,
+    desc: "九天玄女所创，提升修炼和炼丹效率",
+  },
+  {
+    id: 4,
+    name: "《太虚剑意》",
+    effect: "tribulation:1.2",
+    level: 4,
+    desc: "剑道至高心法，提升渡劫成功率",
+  },
+  {
+    id: 5,
+    name: "《大衍神诀》",
+    effect: "expRate:1.5, luck:10",
+    level: 5,
+    desc: "推衍天道，提升修炼效率和气运",
+  },
+  {
+    id: 6,
+    name: "《混沌经》",
+    effect: "expRate:2.0, breakthrough:1.3",
+    level: 6,
+    desc: "混沌初开时的大道经文，大幅提升修炼和突破效率",
+  },
+  {
+    id: 7,
+    name: "《星辰变》",
+    effect: "all:1.25",
+    level: 7,
+    desc: "引星辰之力，全面提升属性",
+  },
+  {
+    id: 8,
+    name: "《一气化三清》",
+    effect: "expRate:2.5, tribulation:1.5",
+    level: 8,
+    desc: "道家至高心法，大幅提升修炼效率和渡劫成功率",
+  },
+];

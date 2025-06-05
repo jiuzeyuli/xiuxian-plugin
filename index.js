@@ -1,7 +1,6 @@
-// xiuxian-plugin/index.js
-const path = require("path");
-const fs = require("fs");
-const Cultivation = require("./apps/cultivation");
+import path from "path";
+import fs from "fs";
+import Cultivation from "./apps/cultivation.js";
 
 // 确保数据目录存在
 const dataPath = path.join(process.cwd(), "data", "xiuxian");
@@ -10,36 +9,37 @@ if (!fs.existsSync(dataPath)) {
 }
 
 // 插件初始化
-module.exports = {
-  name: "修仙渡劫",
-  dsc: "修仙渡劫系统",
-  version: "1.5.0",
-  author: "修仙插件开发组",
-  priority: 9999,
+export default class XiuxianPlugin {
+  constructor() {
+    this.id = "xiuxian";
+    this.name = "修仙渡劫";
+    this._path = import.meta.url;
+  }
 
-  init: async function (bot) {
-    this.cultivation = new Cultivation(bot);
+  async init(app) {
+    this.cultivation = new Cultivation(app);
 
     // 注册指令
     this.cultivation.rule.forEach((item) => {
-      bot.reg({
+      app.reg({
         reg: item.reg,
         fnc: item.fnc,
         event: "message",
-        priority: this.priority,
+        priority: this.cultivation.priority,
         log: true,
+        handler: this.cultivation[item.fnc].bind(this.cultivation),
       });
     });
 
     // 注册新的事件监听器
-    bot.on("message", async (e) => {
+    app.bot.on("message", async (e) => {
       if (e.msg === "#同意双修") {
         await this.cultivation.handleDualCultivationAgreement(e);
       }
     });
 
-    logger.info(
+    app.logger.info(
       `[修仙渡劫] 插件加载完成，共注册 ${this.cultivation.rule.length} 个指令`
     );
-  },
-};
+  }
+}
