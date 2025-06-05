@@ -1,6 +1,5 @@
 import schedule from "node-schedule";
 import DataModel from "../model/DataModel.js";
-import CooldownManager from "../model/CooldownManager.js";
 
 // 导入数据
 import realms from "../resources/data/realms.js";
@@ -11,6 +10,79 @@ import artifacts from "../resources/data/artifacts.js";
 import dungeons from "../resources/data/dungeons.js";
 import tribulations from "../resources/data/tribulations.js";
 import shopItems from "../resources/data/shopItems.js";
+
+// 冷却时间管理器（包含双修请求管理）
+class CooldownManager {
+  constructor() {
+    this.cooldowns = new Map();
+    this.dualCultivationRequests = new Map(); // 双修请求存储
+  }
+
+  /**
+   * 设置冷却时间
+   * @param {string} userId 用户ID
+   * @param {string} type 冷却类型
+   * @param {number} duration 持续时间(毫秒)
+   */
+  setCooldown(userId, type, duration) {
+    const key = `${userId}_${type}`;
+    this.cooldowns.set(key, {
+      expireTime: Date.now() + duration,
+      duration,
+    });
+  }
+
+  /**
+   * 获取剩余冷却时间
+   * @param {string} userId 用户ID
+   * @param {string} type 冷却类型
+   * @returns {number} 剩余时间(毫秒)
+   */
+  getCooldown(userId, type) {
+    const key = `${userId}_${type}`;
+    const cooldown = this.cooldowns.get(key);
+    if (!cooldown) return 0;
+
+    const remaining = cooldown.expireTime - Date.now();
+    return remaining > 0 ? remaining : 0;
+  }
+
+  /**
+   * 添加双修请求
+   * @param {string} requesterId 请求者ID
+   * @param {string} targetId 目标用户ID
+   */
+  addDualCultivationRequest(requesterId, targetId) {
+    this.dualCultivationRequests.set(targetId, {
+      requesterId,
+      timestamp: Date.now(),
+    });
+
+    // 设置2分钟后自动删除请求
+    setTimeout(() => {
+      if (this.dualCultivationRequests.get(targetId)) {
+        this.dualCultivationRequests.delete(targetId);
+      }
+    }, 120000);
+  }
+
+  /**
+   * 获取双修请求
+   * @param {string} targetId 目标用户ID
+   * @returns {object} 请求信息 { requesterId, timestamp }
+   */
+  getDualCultivationRequest(targetId) {
+    return this.dualCultivationRequests.get(targetId);
+  }
+
+  /**
+   * 移除双修请求
+   * @param {string} targetId 目标用户ID
+   */
+  removeDualCultivationRequest(targetId) {
+    this.dualCultivationRequests.delete(targetId);
+  }
+}
 
 export default class Cultivation {
   constructor(app) {
@@ -254,7 +326,7 @@ export default class Cultivation {
         achievements: [], // 成就
         logs: [], // 修仙日志
         backpack: {
-          // 背包系统
+          // 修复背包结构
           items: {},
           capacity: 20,
         },
@@ -471,7 +543,6 @@ export default class Cultivation {
       `❤️ 生命：${user.life}/100`,
       `🍀 气运：${user.luck}/100`,
       `💎 灵石：${user.stone}`,
-      // 修复：添加缺失的右括号
       `📜 功法：${user.arts
         .map((id) => this.arts.find((a) => a.id === id)?.name || "未知")
         .join(", ")}`,
@@ -930,13 +1001,13 @@ export default class Cultivation {
     await e.reply(resultMsg.join("\n"));
   }
 
-  /** 灵根测试 */
+  /** 灵根测试 - 修复条件判断 */
   async spiritRootTest(e) {
     const userId = e.user_id;
     const user = this.getUserData(userId);
 
-    // 如果已有灵根且不是最低级，则不再测试
-    if (user.spiritRoot > 0 && user.spiritRoot > 1) {
+    // 修复：如果已有灵根（user.spiritRoot > 0）则无需再测试
+    if (user.spiritRoot > 0) {
       return e.reply(
         `✨ 当前灵根：${this.spiritRoots[user.spiritRoot].name}（无需重复测试）`
       );
@@ -2389,9 +2460,9 @@ export default class Cultivation {
     );
   }
 
-  /** 获取用户名称 */
+  /** 获取用户名称 - 修复字符串方法 */
   getUserName(userId) {
-    // 实际实现中需要根据平台获取用户名称
-    return `道友${userId.substr(-4)}`;
+    // 使用substring代替substr
+    return `道友${userId.substring(userId.length - 4)}`;
   }
 }

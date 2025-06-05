@@ -17,19 +17,31 @@ export default class XiuxianPlugin {
   }
 
   async init(app) {
+    this.app = app;
     this.cultivation = new Cultivation(app);
+    let validRuleCount = 0;
 
-    // 注册指令
-    this.cultivation.rule.forEach((item) => {
-      app.reg({
-        reg: item.reg,
-        fnc: item.fnc,
-        event: "message",
-        priority: this.cultivation.priority,
-        log: true,
-        handler: this.cultivation[item.fnc].bind(this.cultivation),
+    // 注册指令 - 添加安全检查和过滤
+    this.cultivation.rule
+      .filter((item) => item && item.reg && item.fnc) // 过滤无效条目
+      .forEach((item) => {
+        // 确保处理方法存在
+        if (typeof this.cultivation[item.fnc] !== "function") {
+          app.logger.error(`[修仙渡劫] 无效方法: ${item.fnc}`);
+          return;
+        }
+
+        app.reg({
+          reg: item.reg,
+          fnc: item.fnc,
+          event: "message",
+          priority: this.cultivation.priority,
+          log: true,
+          handler: this.cultivation[item.fnc].bind(this.cultivation),
+        });
+
+        validRuleCount++;
       });
-    });
 
     // 注册新的事件监听器
     app.bot.on("message", async (e) => {
@@ -39,7 +51,13 @@ export default class XiuxianPlugin {
     });
 
     app.logger.info(
-      `[修仙渡劫] 插件加载完成，共注册 ${this.cultivation.rule.length} 个指令`
+      `[修仙渡劫] 插件加载完成，共注册 ${validRuleCount} 个有效指令`
     );
+
+    // 打印无效规则数量用于调试
+    const invalidCount = this.cultivation.rule.length - validRuleCount;
+    if (invalidCount > 0) {
+      app.logger.warn(`[修仙渡劫] 忽略 ${invalidCount} 个无效规则`);
+    }
   }
 }
